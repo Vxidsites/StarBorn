@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#05070a" />
+  <title>StarBorn</title>
+  <style>
+    :root{
+      --bg:#05070a;
+      --bg-soft:#090d13;
+      --bg-panel:#0c1016;
+      --line:#1f2530;
+      --line-soft:#242b37;
+      --text:#f1eee7;
+      --muted:#8a919b;
+      --soft:#b7bcc4;
+      --accent:#d4bb74;
+      --accent-2:#91a7bf;
+      --max:1280px;
+      --pad:clamp(20px,4vw,64px);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{
+      margin:0;
+      overflow-x:hidden;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 78% -10%, rgba(145,167,191,.07), transparent 28%),
+        linear-gradient(180deg,#05070a 0%, #080b10 100%);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    img{max-width:100%;display:block}
+    ::selection{background:rgba(212,187,116,.24);color:#fff}
+
+    /* ---------------- INTRO ---------------- */
+
+    #intro{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      background:#020304;
+      transition:opacity .55s ease,visibility .55s ease;
+    }
+
+    #intro.is-gone{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    body.intro-active{
+      overflow:hidden;
+    }
+
+    body.intro-active #site{
+      opacity:0;
+      transform:scale(1.012);
+      filter:blur(8px);
+    }
+
+    #site{
+      opacity:1;
+      transform:none;
+      filter:none;
+      transition:
+        opacity .7s cubic-bezier(.16,.82,.2,1),
+        transform .8s cubic-bezier(.16,.82,.2,1),
+        filter .6s ease;
+    }
+
+    #introStars{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      opacity:.42;
+    }
+
+    .intro-vignette{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 48%,transparent 0 30%,rgba(0,0,0,.28) 66%,rgba(0,0,0,.88) 100%),
+        linear-gradient(180deg,rgba(255,255,255,.01),transparent 34%,rgba(0,0,0,.24));
+    }
+
+    .intro-stage{
+      position:relative;
+      z-index:2;
+      width:min(1240px,95vw);
+      min-height:360px;
+      display:grid;
+      place-items:center;
+      text-align:center;
+    }
+
+    .studio-card{
+      position:absolute;
+      opacity:0;
+      will-change:opacity,transform,filter;
+    }
+
+    .studio-card.show{
+      animation:studioCardIn 1.55s cubic-bezier(.2,.72,.2,1) forwards;
+    }
+
+    .studio-name{
+      font-size:clamp(12px,1vw,15px);
+      letter-spacing:.46em;
+      text-transform:uppercase;
+      font-weight:700;
+    }
+
+    .presents{
+      margin-top:13px;
+      color:#777e89;
+      font-family:Georgia,"Times New Roman",serif;
+      font-style:italic;
+      font-size:14px;
+      letter-spacing:.06em;
+    }
+
+    .title-card{
+      position:absolute;
+      width:100%;
+      opacity:0;
+      display:grid;
+      place-items:center;
+      will-change:opacity;
+    }
+
+    .title-card.form{
+      opacity:1;
+    }
+
+    .intro-title-main,
+    .break-piece{
+      font-family:"Arial Narrow",Arial,Helvetica,sans-serif;
+      font-size:clamp(80px,14vw,190px);
+      line-height:.78;
+      letter-spacing:-.07em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:var(--text);
+      white-space:nowrap;
+      text-shadow:
+        -1px 0 rgba(125,156,189,.26),
+        1px 0 rgba(212,187,116,.16);
+    }
+
+    .intro-title-main{
+      position:relative;
+      opacity:0;
+      clip-path:inset(0 100% 0 0);
+      filter:blur(3px);
+      transform:translateY(4px) scale(.995);
+      will-change:clip-path,opacity,filter,transform;
+    }
+
+    .title-card.form .intro-title-main{
+      animation:titleDraw 1.12s .08s cubic-bezier(.16,.74,.18,1) forwards;
+    }
+
+    .intro-title-main::after{
+      content:"";
+      position:absolute;
+      inset:-18% -4%;
+      opacity:0;
+      background:linear-gradient(
+        100deg,
+        transparent 30%,
+        rgba(255,255,255,.08) 46%,
+        rgba(212,187,116,.15) 50%,
+        transparent 58%
+      );
+      transform:translateX(-70%);
+      pointer-events:none;
+    }
+
+    .title-card.form .intro-title-main::after{
+      animation:titleLight 1.25s .18s ease-out forwards;
+    }
+
+    .intro-rule{
+      width:min(700px,62vw);
+      height:1px;
+      margin-top:30px;
+      opacity:0;
+      transform:scaleX(.15);
+      background:linear-gradient(90deg,transparent,rgba(212,187,116,.46),transparent);
+    }
+
+    .title-card.form .intro-rule{
+      animation:ruleIn .58s 1s ease forwards;
+    }
+
+    .intro-sub{
+      margin-top:15px;
+      color:#6e7580;
+      font-size:9px;
+      letter-spacing:.36em;
+      text-transform:uppercase;
+      opacity:0;
+      transform:translateY(5px);
+    }
+
+    .title-card.form .intro-sub{
+      animation:subtleIn .42s 1.12s ease forwards;
+    }
+
+    .intro-comet{
+      position:absolute;
+      z-index:6;
+      top:49%;
+      left:-34vw;
+      width:min(370px,27vw);
+      min-width:190px;
+      height:1px;
+      opacity:0;
+      background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(145,167,191,.05),
+        rgba(212,187,116,.36),
+        rgba(255,255,255,.96)
+      );
+      box-shadow:0 0 12px rgba(212,187,116,.16);
+      transform:translateY(-50%) rotate(-1.5deg);
+      pointer-events:none;
+      will-change:left,opacity;
+    }
+
+    .intro-comet::after{
+      content:"";
+      position:absolute;
+      right:-2px;
+      top:50%;
+      width:4px;
+      height:4px;
+      border-radius:50%;
+      background:#fff;
+      transform:translateY(-50%);
+      box-shadow:
+        0 0 7px rgba(255,255,255,.95),
+        0 0 17px rgba(212,187,116,.34);
+    }
+
+    .intro-comet.fly{
+      animation:cometSweep 1.32s cubic-bezier(.16,.68,.2,1) forwards;
+    }
+
+    .break-layer{
+      position:absolute;
+      inset:0;
+      z-index:5;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      opacity:0;
+      visibility:hidden;
+    }
+
+    .break-layer.swap{
+      opacity:1;
+      visibility:visible;
+    }
+
+    .break-piece{
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:100%;
+      text-align:center;
+      transform:translate(-50%,-50%);
+      will-change:transform,opacity,filter;
+    }
+
+    .break-piece.one{
+      clip-path:polygon(0 0,52% 0,47% 51%,0 48%);
+    }
+
+    .break-piece.two{
+      clip-path:polygon(52% 0,100% 0,100% 46%,47% 51%);
+    }
+
+    .break-piece.three{
+      clip-path:polygon(0 48%,47% 51%,52% 100%,0 100%);
+    }
+
+    .break-piece.four{
+      clip-path:polygon(47% 51%,100% 46%,100% 100%,52% 100%);
+    }
+
+    .break-layer.break .one{
+      animation:pieceOne .68s cubic-bezier(.12,.72,.12,1) forwards;
+    }
+
+    .break-layer.break .two{
+      animation:pieceTwo .68s cubic-bezier(.12,.72,.12,1) forwards;
+    }
+
+    .break-layer.break .three{
+      animation:pieceThree .68s cubic-bezier(.12,.72,.12,1) forwards;
+    }
+
+    .break-layer.break .four{
+      animation:pieceFour .68s cubic-bezier(.12,.72,.12,1) forwards;
+    }
+
+    .intro-cut{
+      position:absolute;
+      z-index:7;
+      left:50%;
+      top:50%;
+      width:0;
+      height:1px;
+      opacity:0;
+      transform:translate(-50%,-50%) rotate(-1deg);
+      background:linear-gradient(90deg,transparent,#fff,rgba(212,187,116,.7),transparent);
+      box-shadow:0 0 14px rgba(255,255,255,.22);
+      pointer-events:none;
+    }
+
+    .intro-cut.go{
+      animation:cutAcross .38s ease-out forwards;
+    }
+
+    .title-card.breaking{
+      opacity:0;
+    }
+
+    @keyframes studioCardIn{
+      0%{opacity:0;transform:translateY(8px);filter:blur(5px)}
+      22%,66%{opacity:1;transform:none;filter:blur(0)}
+      100%{opacity:0;transform:translateY(-5px);filter:blur(4px)}
+    }
+
+    @keyframes titleDraw{
+      0%{
+        opacity:0;
+        clip-path:inset(0 100% 0 0);
+        filter:blur(3px);
+        transform:translateY(4px) scale(.995);
+      }
+      20%{opacity:1}
+      100%{
+        opacity:1;
+        clip-path:inset(0 0 0 0);
+        filter:blur(0);
+        transform:none;
+      }
+    }
+
+    @keyframes titleLight{
+      0%{opacity:0;transform:translateX(-70%)}
+      22%{opacity:.8}
+      100%{opacity:0;transform:translateX(70%)}
+    }
+
+    @keyframes ruleIn{
+      from{opacity:0;transform:scaleX(.15)}
+      to{opacity:.7;transform:scaleX(1)}
+    }
+
+    @keyframes subtleIn{
+      from{opacity:0;transform:translateY(5px)}
+      to{opacity:1;transform:none}
+    }
+
+    @keyframes cometSweep{
+      0%{left:-34vw;opacity:0}
+      8%{opacity:1}
+      90%{opacity:1}
+      100%{left:112vw;opacity:0}
+    }
+
+    @keyframes cutAcross{
+      0%{width:0;opacity:0}
+      20%{opacity:.9}
+      100%{width:min(1120px,88vw);opacity:0}
+    }
+
+    @keyframes pieceOne{
+      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
+      to{transform:translate(calc(-50% - 92px),calc(-50% - 44px)) rotate(-2.5deg);opacity:0;filter:blur(2px)}
+    }
+
+    @keyframes pieceTwo{
+      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
+      to{transform:translate(calc(-50% + 108px),calc(-50% - 36px)) rotate(2.8deg);opacity:0;filter:blur(2px)}
+    }
+
+    @keyframes pieceThree{
+      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
+      to{transform:translate(calc(-50% - 110px),calc(-50% + 48px)) rotate(2.4deg);opacity:0;filter:blur(2px)}
+    }
+
+    @keyframes pieceFour{
+      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
+      to{transform:translate(calc(-50% + 96px),calc(-50% + 52px)) rotate(-2.2deg);opacity:0;filter:blur(2px)}
+    }
+
+    /* ---------------- BACKGROUND ---------------- */
+
+    #stars{
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      width:100%;
+      height:100%;
+      opacity:.24;
+      pointer-events:none;
+    }
+
+    /* ---------------- NAV ---------------- */
+
+    .nav{
+      position:fixed;
+      top:0;left:0;right:0;
+      z-index:80;
+      height:72px;
+      padding:0 var(--pad);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:linear-gradient(180deg,rgba(5,7,10,.92),rgba(5,7,10,.58),transparent);
+      backdrop-filter:blur(8px);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-transform:uppercase;
+    }
+
+    .brand-mark{
+      width:22px;
+      height:22px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      filter:drop-shadow(0 0 10px rgba(212,187,116,.12));
+    }
+
+    .brand-mark svg{
+      width:100%;
+      height:100%;
+      overflow:visible;
+    }
+
+    .brand-mark .outer-spin{
+      transform-origin:50% 50%;
+      animation:brandSpin 11s linear infinite;
+    }
+
+    .brand-mark .frame,
+    .brand-mark .frame-2{
+      fill:none;
+      stroke:var(--accent);
+      stroke-width:2.4;
+      stroke-linejoin:round;
+      opacity:.95;
+    }
+
+    .brand-mark .frame-2{opacity:.55}
+
+    .brand-mark .core-star{
+      fill:var(--accent);
+      opacity:.96;
+      transform-origin:50% 50%;
+      animation:corePulse 2.8s ease-in-out infinite;
+    }
+
+    .brand-mark .core-dot{
+      fill:#f4ecd5;
+      opacity:.98;
+    }
+
+    .brand:hover .brand-mark .outer-spin{
+      animation-duration:3.5s;
+    }
+
+    .brand-text{
+      font-size:12px;
+      letter-spacing:.22em;
+      font-weight:800;
+      line-height:1;
+      color:#f0eee8;
+    }
+
+    .nav-links{
+      display:flex;
+      gap:28px;
+    }
+
+    .nav-links a{
+      position:relative;
+      color:#9299a3;
+      font-size:11px;
+      letter-spacing:.08em;
+      transition:color .2s ease;
+    }
+
+    .nav-links a::after{
+      content:"";
+      position:absolute;
+      left:0;right:100%;
+      bottom:-7px;
+      height:1px;
+      background:var(--accent);
+      transition:right .22s ease;
+    }
+
+    .nav-links a:hover{color:#fff}
+    .nav-links a:hover::after{right:0}
+
+    @keyframes brandSpin{
+      from{transform:rotate(0deg)}
+      to{transform:rotate(360deg)}
+    }
+
+    @keyframes corePulse{
+      0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 rgba(212,187,116,0))}
+      50%{transform:scale(1.08);filter:drop-shadow(0 0 8px rgba(212,187,116,.28))}
+    }
+
+    /* ---------------- LAYOUT ---------------- */
+
+    .section{
+      padding:108px var(--pad);
+    }
+
+    .section-inner{
+      width:min(var(--max),100%);
+      margin:0 auto;
+    }
+
+    .section-head{
+      display:grid;
+      grid-template-columns:170px minmax(0,1fr);
+      gap:40px;
+      align-items:start;
+      margin-bottom:58px;
+    }
+
+    .section-index{
+      color:#646b75;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:10px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      padding-top:9px;
+    }
+
+    .section-title{
+      margin:0;
+      max-width:840px;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(34px,4.7vw,68px);
+      line-height:1.04;
+      font-weight:400;
+      letter-spacing:-.025em;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(16px);
+      transition:opacity .72s cubic-bezier(.2,.72,.2,1),transform .72s cubic-bezier(.2,.72,.2,1);
+    }
+
+    .reveal.on{
+      opacity:1;
+      transform:none;
+    }
+
+    /* ---------------- HERO ---------------- */
+
+    .hero{
+      min-height:100svh;
+      padding:116px var(--pad) 56px;
+      display:flex;
+      align-items:flex-end;
+      position:relative;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      left:var(--pad);
+      right:var(--pad);
+      bottom:0;
+      height:1px;
+      background:var(--line);
+    }
+
+    .hero-inner{
+      width:min(var(--max),100%);
+      margin:0 auto;
+    }
+
+    .eyebrow{
+      margin-bottom:22px;
+      color:var(--accent);
+      font-size:10px;
+      letter-spacing:.38em;
+      text-transform:uppercase;
+    }
+
+    .hero h1{
+      margin:0;
+      width:100%;
+      font-family:"Arial Narrow",Arial,Helvetica,sans-serif;
+      font-size:clamp(72px,13.3vw,194px);
+      line-height:.78;
+      letter-spacing:-.065em;
+      text-transform:uppercase;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .hero-bottom{
+      margin-top:48px;
+      padding-top:20px;
+      border-top:1px solid var(--line);
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:40px;
+      align-items:end;
+    }
+
+    .hero-copy{
+      max-width:640px;
+      color:#a2a8b1;
+      font-size:14px;
+      line-height:1.75;
+    }
+
+    .hero-copy strong{
+      color:#e2e0d9;
+      font-weight:500;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      padding:12px 16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.012);
+      color:#d6d8db;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:10px;
+      transition:.2s ease;
+    }
+
+    .btn:hover{
+      border-color:#5b626c;
+      background:rgba(255,255,255,.03);
+      transform:translateY(-1px);
+    }
+
+    .btn.primary{
+      border-color:rgba(212,187,116,.48);
+      color:#f3ecd8;
+    }
+
+    .hero-strip{
+      width:min(var(--max),100%);
+      margin:34px auto 0;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      border-top:1px solid var(--line);
+      border-left:1px solid var(--line);
+    }
+
+    .hero-cell{
+      min-height:84px;
+      padding:18px;
+      border-right:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.006);
+    }
+
+    .hero-cell b{
+      display:block;
+      margin-bottom:10px;
+      color:#707782;
+      font-size:9px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .hero-cell span{
+      display:block;
+      color:#ced1d6;
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    /* ---------------- ABOUT ---------------- */
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:22px;
+    }
+
+    .statement{
+      min-height:360px;
+      display:flex;
+      align-items:flex-end;
+      padding:30px;
+      border:1px solid var(--line);
+      background:
+        linear-gradient(135deg,rgba(255,255,255,.015),transparent 48%),
+        #090d12;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .statement::before{
+      content:"";
+      position:absolute;
+      width:235px;height:235px;
+      border:1px solid rgba(145,167,191,.13);
+      border-radius:50%;
+      right:-86px;
+      top:-84px;
+      box-shadow:
+        0 0 0 32px rgba(145,167,191,.018),
+        0 0 0 65px rgba(145,167,191,.012);
+    }
+
+    .statement p{
+      margin:0;
+      max-width:590px;
+      font-size:clamp(22px,2.5vw,38px);
+      line-height:1.18;
+      letter-spacing:-.025em;
+    }
+
+    .facts{
+      border-top:1px solid var(--line);
+    }
+
+    .fact{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:20px;
+      padding:20px 0;
+      border-bottom:1px solid var(--line);
+    }
+
+    .fact b{
+      color:#6f7680;
+      font-size:9px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+    }
+
+    .fact span{
+      color:#c5c7cb;
+      font-size:13px;
+    }
+
+    /* ---------------- SYSTEMS ---------------- */
+
+    .systems-list{
+      border-top:1px solid var(--line);
+    }
+
+    .system-row{
+      display:grid;
+      grid-template-columns:90px minmax(180px,.8fr) minmax(0,1.4fr) auto;
+      gap:28px;
+      align-items:center;
+      padding:24px 0;
+      border-bottom:1px solid var(--line);
+      transition:padding-left .2s ease, background .2s ease;
+    }
+
+    .system-row:hover{
+      padding-left:10px;
+      background:linear-gradient(90deg,rgba(255,255,255,.014),transparent 56%);
+    }
+
+    .system-no{
+      color:#5f6671;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:10px;
+      letter-spacing:.12em;
+    }
+
+    .system-name{
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(20px,2.1vw,30px);
+    }
+
+    .system-desc{
+      max-width:620px;
+      color:#8d949e;
+      font-size:13px;
+      line-height:1.65;
+    }
+
+    .system-state{
+      color:#747b85;
+      font-size:9px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    /* ---------------- WORLD ---------------- */
+
+    .world-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+    }
+
+    .world-panel{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.01),rgba(255,255,255,.005));
+      padding:28px 26px;
+      min-height:340px;
+    }
+
+    .world-panel h3{
+      margin:0 0 14px;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(24px,2.7vw,38px);
+      font-weight:400;
+      letter-spacing:-.025em;
+    }
+
+    .world-panel p{
+      margin:0 0 22px;
+      color:#99a0aa;
+      font-size:14px;
+      line-height:1.72;
+      max-width:52ch;
+    }
+
+    .world-list{
+      border-top:1px solid var(--line-soft);
+    }
+
+    .world-item{
+      display:grid;
+      grid-template-columns:90px 1fr;
+      gap:18px;
+      padding:16px 0;
+      border-bottom:1px solid var(--line-soft);
+    }
+
+    .world-item b{
+      color:#6b727d;
+      font-size:9px;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+
+    .world-item span{
+      color:#d0d3d7;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .world-note{
+      display:grid;
+      align-items:end;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .world-note::before{
+      content:"";
+      position:absolute;
+      inset:auto -30px -30px auto;
+      width:220px;
+      height:220px;
+      border:1px solid rgba(212,187,116,.12);
+      border-radius:50%;
+      box-shadow:0 0 0 28px rgba(212,187,116,.018), 0 0 0 55px rgba(212,187,116,.01);
+    }
+
+    .world-note p{
+      margin:0;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(21px,2.2vw,30px);
+      line-height:1.3;
+      color:#ece8de;
+      max-width:16ch;
+    }
+
+    .world-note small{
+      display:block;
+      margin-top:18px;
+      color:#7d848f;
+      font-size:10px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    /* ---------------- LORE ---------------- */
+
+    .lore-piece{
+      max-width:900px;
+      margin-left:210px;
+      padding:34px 0 8px;
+      border-top:1px solid var(--line);
+      position:relative;
+    }
+
+    .lore-piece::before{
+      content:"ENTRY 001";
+      position:absolute;
+      top:-7px;
+      left:0;
+      padding-right:12px;
+      background:var(--bg);
+      color:var(--accent);
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:9px;
+      letter-spacing:.18em;
+    }
+
+    .lore-piece h3{
+      margin:0 0 28px;
+      font-family:Georgia,"Times New Roman",serif;
+      font-weight:400;
+      font-size:clamp(28px,3.4vw,46px);
+      letter-spacing:-.025em;
+    }
+
+    .lore-piece p{
+      margin:0 0 22px;
+      max-width:78ch;
+      color:#a8adb5;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:16px;
+      line-height:1.9;
+    }
+
+    .next-entry{
+      margin-top:40px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+      padding:18px 0;
+      border-top:1px solid var(--line);
+      color:#727984;
+    }
+
+    .next-entry strong{
+      color:#b9bdc3;
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .next-entry span{
+      font-size:10px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    /* ---------------- WARNING ---------------- */
+
+    .warning-section{
+      padding:20px var(--pad) 110px;
+    }
+
+    .warning-wrap{
+      width:min(var(--max),100%);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:190px minmax(0,1fr);
+      gap:20px;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      padding:38px 0 42px;
+    }
+
+    .warning-meta{
+      color:#646b75;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:9px;
+      line-height:1.8;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .warning-copy{
+      max-width:820px;
+    }
+
+    .warning-copy h2{
+      margin:0 0 22px;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(33px,4.7vw,66px);
+      line-height:1.02;
+      font-weight:400;
+      letter-spacing:-.025em;
+    }
+
+    .warning-copy p{
+      margin:0;
+      max-width:720px;
+      color:#a0a6af;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:16px;
+      line-height:1.85;
+    }
+
+    .warning-last{
+      display:block;
+      margin-top:22px;
+      color:#d0bea0;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:10px;
+      letter-spacing:.08em;
+    }
+
+    /* ---------------- DEV ---------------- */
+
+    .dev-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      border-top:1px solid var(--line);
+      border-left:1px solid var(--line);
+    }
+
+    .dev-card{
+      min-height:220px;
+      padding:24px;
+      border-right:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      background:rgba(255,255,255,.006);
+      transition:background .22s ease, transform .22s ease;
+    }
+
+    .dev-card:hover{
+      background:rgba(255,255,255,.015);
+      transform:translateY(-2px);
+    }
+
+    .dev-card small{
+      color:#69717b;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-size:9px;
+    }
+
+    .dev-card h3{
+      margin:48px 0 8px;
+      font-size:19px;
+      font-weight:600;
+    }
+
+    .dev-card p{
+      margin:0;
+      color:#8d949e;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    /* ---------------- CTA ---------------- */
+
+    .cta{
+      padding:0 var(--pad) 120px;
+    }
+
+    .cta-shell{
+      width:min(var(--max),100%);
+      margin:0 auto;
+      border:1px solid var(--line);
+      padding:34px 0 0;
+      background:linear-gradient(180deg,rgba(255,255,255,.01),rgba(255,255,255,.004));
+    }
+
+    .cta-head{
+      padding:0 28px 30px;
+      display:grid;
+      grid-template-columns:170px minmax(0,1fr);
+      gap:40px;
+      align-items:start;
+    }
+
+    .cta-copy{
+      max-width:760px;
+    }
+
+    .cta-copy h2{
+      margin:0 0 14px;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(30px,4vw,58px);
+      font-weight:400;
+      line-height:1.03;
+      letter-spacing:-.025em;
+    }
+
+    .cta-copy p{
+      margin:0;
+      color:#99a0aa;
+      font-size:14px;
+      line-height:1.75;
+    }
+
+    .cta-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      border-top:1px solid var(--line);
+      border-left:1px solid var(--line);
+    }
+
+    .cta-box{
+      min-height:110px;
+      padding:20px;
+      border-right:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.004);
+    }
+
+    .cta-box b{
+      display:block;
+      margin-bottom:12px;
+      color:#6f7680;
+      font-size:9px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .cta-box span{
+      color:#d0d3d7;
+      font-size:13px;
+      line-height:1.65;
+    }
+
+    /* ---------------- FOOTER ---------------- */
+
+    footer{
+      padding:42px var(--pad) 54px;
+      border-top:1px solid var(--line);
+    }
+
+    .footer-inner{
+      width:min(var(--max),100%);
+      margin:auto;
+      display:flex;
+      justify-content:space-between;
+      gap:30px;
+      color:#666d77;
+      font-size:10px;
+      letter-spacing:.09em;
+    }
+
+    /* ---------------- RESPONSIVE ---------------- */
+
+    @media(max-width:1060px){
+      .hero-strip,
+      .dev-grid,
+      .cta-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+
+    @media(max-width:900px){
+      .nav-links{display:none}
+
+      .hero{
+        padding-top:110px;
+      }
+
+      .hero h1{
+        font-size:clamp(72px,20vw,132px);
+        white-space:normal;
+        line-height:.82;
+      }
+
+      .hero-bottom,
+      .section-head,
+      .about-grid,
+      .world-grid,
+      .cta-head{
+        grid-template-columns:1fr;
+      }
+
+      .hero-actions{
+        justify-content:flex-start;
+      }
+
+      .lore-piece{
+        margin-left:0;
+      }
+
+      .system-row{
+        grid-template-columns:52px 1fr;
+        gap:12px 20px;
+      }
+
+      .system-desc{
+        grid-column:2;
+      }
+
+      .system-state{
+        grid-column:2;
+      }
+
+      .warning-wrap{
+        grid-template-columns:1fr;
+      }
+
+      .hero-strip{
+        margin-top:26px;
+      }
+    }
+
+    @media(max-width:620px){
+      .brand-text{display:none}
+
+      .hero-strip,
+      .dev-grid,
+      .cta-grid{
+        grid-template-columns:1fr;
+      }
+
+      .world-item,
+      .fact{
+        grid-template-columns:92px 1fr;
+      }
+
+      .footer-inner{
+        flex-direction:column;
+      }
+
+      .section{
+        padding-top:78px;
+        padding-bottom:78px;
+      }
+
+      .warning-section{
+        padding-bottom:80px;
+      }
+
+      .cta{
+        padding-bottom:90px;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:.01ms!important;
+        animation-iteration-count:1!important;
+        transition-duration:.01ms!important;
+        scroll-behavior:auto!important;
+      }
+    }
+  </style>
+</head>
+<body class="intro-active">
+  <div id="intro" aria-hidden="true">
+    <canvas id="introStars"></canvas>
+    <div class="intro-vignette"></div>
+
+    <div class="intro-stage">
+      <div class="studio-card" id="studioCard">
+        <div class="studio-name">StarBorn Studios</div>
+        <div class="presents">presents</div>
+      </div>
+
+      <div class="intro-comet" id="introComet"></div>
+
+      <div class="title-card" id="titleCard">
+        <div class="intro-title-main">STARBORN</div>
+        <div class="intro-rule"></div>
+      </div>
+
+      <div class="break-layer" id="breakLayer">
+        <div class="break-piece one">STARBORN</div>
+        <div class="break-piece two">STARBORN</div>
+        <div class="break-piece three">STARBORN</div>
+        <div class="break-piece four">STARBORN</div>
+      </div>
+
+      <div class="intro-cut" id="introCut"></div>
+    </div>
+  </div>
+
+  <canvas id="stars"></canvas>
+
+  <main id="site">
+    <nav class="nav">
+      <a href="#top" class="brand" aria-label="StarBorn Studios">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+            <g class="outer-spin">
+              <polygon class="frame" points="32,5 41,23 59,32 41,41 32,59 23,41 5,32 23,23"></polygon>
+              <polygon class="frame-2" points="32,14 38,26 50,32 38,38 32,50 26,38 14,32 26,26"></polygon>
+            </g>
+            <polygon class="core-star" points="32,21 35,29 43,32 35,35 32,43 29,35 21,32 29,29"></polygon>
+            <circle class="core-dot" cx="32" cy="32" r="2.4"></circle>
+          </svg>
+        </span>
+        <span class="brand-text">StarBorn Studios</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#about">Game</a>
+        <a href="#systems">Systems</a>
+        <a href="#world">World</a>
+        <a href="#lore">Lore</a>
+        <a href="#dev">Dev</a>
+      </div>
+    </nav>
+
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div class="eyebrow">StarBorn Studios presents</div>
+        <h1>StarBorn</h1>
+
+        <div class="hero-bottom">
+          <div class="hero-copy">
+            <strong>StarBorn is an RNG-based Roblox experience built around collecting stars, progression, exploration and discovery.</strong>
+            Under the surface, the world holds a larger mystery, with hidden details, fragments of history and a story that only makes sense once enough pieces are found.
+          </div>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#lore">Read the lore</a>
+            <a class="btn" href="#dev">See development</a>
+          </div>
+        </div>
+
+        <div class="hero-strip reveal">
+          <div class="hero-cell">
+            <b>Status</b>
+            <span>Currently being rebuilt with a stronger visual identity and a more connected world.</span>
+          </div>
+          <div class="hero-cell">
+            <b>Core Loop</b>
+            <span>Roll stars, collect them, explore the map, unlock new things and piece together what is happening.</span>
+          </div>
+          <div class="hero-cell">
+            <b>Direction</b>
+            <span>Less generic RNG. More atmosphere, better polish, real secrets and a world worth paying attention to.</span>
+          </div>
+          <div class="hero-cell">
+            <b>Next Drop</b>
+            <span>Lore entry two stays locked until the game officially releases.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div class="section-index">01 / Game</div>
+          <h2 class="section-title">Built to feel like more than just standing around and pressing roll.</h2>
+        </div>
+
+        <div class="about-grid">
+          <div class="statement reveal">
+            <p>
+              Every star, area, effect and hidden detail is being rebuilt so the whole game feels like it belongs to the same world.
+            </p>
+          </div>
+
+          <div class="facts reveal">
+            <div class="fact"><b>Genre</b><span>RNG + exploration + progression</span></div>
+            <div class="fact"><b>Platform</b><span>Roblox</span></div>
+            <div class="fact"><b>Studio</b><span>StarBorn Studios</span></div>
+            <div class="fact"><b>Status</b><span>Currently in development</span></div>
+            <div class="fact"><b>Focus</b><span>Custom UI, animation, VFX, SFX, world design and lore</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="systems">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div class="section-index">02 / Systems</div>
+          <h2 class="section-title">Luck gets you a star. The rest of the game gives you a reason to care about it.</h2>
+        </div>
+
+        <div class="systems-list reveal">
+          <div class="system-row">
+            <div class="system-no">01</div>
+            <div class="system-name">Rolling</div>
+            <div class="system-desc">The main roll system, rare pull sequences, auto roll, quick roll and different presentation depending on what you hit.</div>
+            <div class="system-state">Rebuilding</div>
+          </div>
+
+          <div class="system-row">
+            <div class="system-no">02</div>
+            <div class="system-name">Star Index</div>
+            <div class="system-desc">A proper collection for discovered stars, rarities, variants and anything unusual you manage to find.</div>
+            <div class="system-state">Planned</div>
+          </div>
+
+          <div class="system-row">
+            <div class="system-no">03</div>
+            <div class="system-name">Exploration</div>
+            <div class="system-desc">Areas, hidden rooms, NPCs and things in the map that are easy to miss if you only stand in one place and roll.</div>
+            <div class="system-state">Rebuilding</div>
+          </div>
+
+          <div class="system-row">
+            <div class="system-no">04</div>
+            <div class="system-name">Multiplayer</div>
+            <div class="system-desc">Parties, trading, leaderboards and ways to actually do things with other players instead of simply playing beside them.</div>
+            <div class="system-state">Planned</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="world">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div class="section-index">03 / World</div>
+          <h2 class="section-title">The map is not just a backdrop. It is part of the mystery.</h2>
+        </div>
+
+        <div class="world-grid">
+          <div class="world-panel reveal">
+            <h3>What the world needs to do</h3>
+            <p>
+              The map should give players reasons to move, search, backtrack and pay attention. Not every important thing will be marked.
+            </p>
+
+            <div class="world-list">
+              <div class="world-item">
+                <b>Spawn</b>
+                <span>The starting point, early systems and the first signs that something about the stars is off.</span>
+              </div>
+              <div class="world-item">
+                <b>Outer Areas</b>
+                <span>Places built for progression, better stars, stranger discoveries and stronger visual identity.</span>
+              </div>
+              <div class="world-item">
+                <b>Secrets</b>
+                <span>Hidden rooms, odd landmarks, locked spaces and details that matter more once the lore starts making sense.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="world-panel world-note reveal">
+            <div>
+              <p>
+                Some parts of StarBorn are meant to feel normal at first. They only start feeling wrong once players know what to look for.
+              </p>
+              <small>World note / design direction</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="lore">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div class="section-index">04 / Lore</div>
+          <h2 class="section-title">The story begins here.</h2>
+        </div>
+
+        <article class="lore-piece reveal">
+          <h3>The First Fall</h3>
+
+          <p>
+            No one remembers the exact night the first star fell. The oldest records only mention a light over the northern sky, bright enough to turn midnight white for a few seconds. By morning, something had changed. Small fragments of light were scattered across the land, buried in fields, lodged between cliffs, and resting in places no one had seen before. They looked like pieces of stars, but they were warm to the touch, almost alive, and every fragment carried a different shape, glow and weight.
+          </p>
+
+          <p>
+            At first, people treated them like miracles. Villages formed around the larger fragments, collectors began searching farther from home, and strange machines were built to pull more of them from the sky. The more stars that were found, the stranger the world became. New paths appeared where there had been nothing before. Buildings began showing up on maps with no record of who built them. Some collectors claimed their stars moved while nobody was watching, always turning toward the same part of the sky, as if waiting for something else to arrive.
+          </p>
+
+          <p>
+            Years passed and the falling never stopped. Most people eventually stopped asking where the stars came from and learned to live with them. The ones who kept asking left behind records that were later hidden, burned or simply went missing. One surviving page contains a set of coordinates that do not match any known place, followed by a sentence written hard enough to tear through the paper: <em>the first fall was not the arrival.</em> Everything after that page is gone. The only thing written on the back is a date that has not happened yet.
+          </p>
+
+          <div class="next-entry">
+            <strong>Entry 002 / Sealed</strong>
+            <span>Opens when StarBorn releases</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="warning-section" id="warning">
+      <div class="warning-wrap reveal">
+        <div class="warning-meta">
+          Recovered note<br>
+          Author unknown<br>
+          Page damaged
+        </div>
+
+        <div class="warning-copy">
+          <h2>Stop calling them stars.</h2>
+          <p>
+            Stars do not turn when you look away. They do not gather over the same house three nights in a row. And they do not know your name.
+            <span class="warning-last">If one lands near you, leave it where it fell.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dev">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <div class="section-index">05 / Development</div>
+          <h2 class="section-title">Current direction.</h2>
+        </div>
+
+        <div class="dev-grid reveal">
+          <article class="dev-card">
+            <small>01 / Rolling</small>
+            <div>
+              <h3>Roll system</h3>
+              <p>Cleaner UI, smoother pacing, slot-style rolling and rare pulls that actually feel rare when they happen.</p>
+            </div>
+          </article>
+
+          <article class="dev-card">
+            <small>02 / World</small>
+            <div>
+              <h3>Map + secrets</h3>
+              <p>More places to explore, hidden areas, NPCs, portals and details that tie directly back into the story.</p>
+            </div>
+          </article>
+
+          <article class="dev-card">
+            <small>03 / Presentation</small>
+            <div>
+              <h3>Visual polish</h3>
+              <p>Custom animation, VFX, SFX, lighting and UI so the game stops feeling like a pile of default parts.</p>
+            </div>
+          </article>
+
+          <article class="dev-card">
+            <small>04 / Release prep</small>
+            <div>
+              <h3>Lore entry two</h3>
+              <p>The second lore piece is being saved for release, so the first real drop ends with something still locked.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-shell reveal">
+        <div class="cta-head">
+          <div class="section-index">06 / Archive Notes</div>
+          <div class="cta-copy">
+            <h2>More is already out there.</h2>
+            <p>
+              This page only shows the beginning. The rest of the story is meant to be uncovered through later entries, map details, hidden locations and whatever follows the next fall.
+            </p>
+          </div>
+        </div>
+
+        <div class="cta-grid">
+          <div class="cta-box">
+            <b>Website lore</b>
+            <span>Entry one is live now. Entry two remains locked until release.</span>
+          </div>
+          <div class="cta-box">
+            <b>In-game discovery</b>
+            <span>Not every important clue belongs on the site. Some things have to be found in the world itself.</span>
+          </div>
+          <div class="cta-box">
+            <b>Long-term plan</b>
+            <span>The stars are only the visible part of the problem. The answer comes later.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-inner">
+        <span>© 2026 STARBORN STUDIOS</span>
+        <span>STARBORN / IN DEVELOPMENT</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const intro = document.getElementById("intro");
+      const studio = document.getElementById("studioCard");
+      const title = document.getElementById("titleCard");
+      const comet = document.getElementById("introComet");
+      const breakLayer = document.getElementById("breakLayer");
+      const introCut = document.getElementById("introCut");
+
+      const introKey = "starbornIntroPolishedV2";
+      const skipIntro = sessionStorage.getItem(introKey) === "1";
+
+      function finishIntro(){
+        intro.classList.add("is-gone");
+        sessionStorage.setItem(introKey,"1");
+        setTimeout(()=>intro.remove(),600);
+      }
+
+      function breakTitle(){
+        // Swap the real title for the clipped copy on the SAME frame.
+        // This avoids the doubled-text glitch from the previous intro.
+        title.style.visibility = "hidden";
+        breakLayer.classList.add("swap");
+        introCut.classList.add("go");
+
+        requestAnimationFrame(()=>{
+          requestAnimationFrame(()=>{
+            breakLayer.classList.add("break");
+            document.body.classList.remove("intro-active");
+          });
+        });
+      }
+
+      if(skipIntro){
+        document.body.classList.remove("intro-active");
+        intro.remove();
+      }else{
+        requestAnimationFrame(()=>{
+          studio.classList.add("show");
+        });
+
+        // Let the studio card finish completely before anything else appears.
+        setTimeout(()=>{
+          studio.style.visibility = "hidden";
+        },1580);
+
+        // A single shooting streak passes through.
+        setTimeout(()=>{
+          comet.classList.add("fly");
+        },1770);
+
+        // STARBORN is revealed directly behind the streak.
+        setTimeout(()=>{
+          title.classList.add("form");
+        },1910);
+
+        // Clean hold, then one exact-frame swap into the break animation.
+        setTimeout(breakTitle,3350);
+
+        setTimeout(finishIntro,4070);
+      }
+
+      // Background starfield + shooting stars
+      function createSky(canvas, count, driftSpeed = .008) {
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        let w = 0, h = 0, dpr = Math.min(devicePixelRatio || 1, 2);
+        let stars = [];
+        let meteors = [];
+        let nextMeteor = 0;
+
+        function resize(){
+          w = canvas.clientWidth || innerWidth;
+          h = canvas.clientHeight || innerHeight;
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+          ctx.setTransform(dpr,0,0,dpr,0,0);
+
+          stars = Array.from({length: count}, () => ({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: Math.random() * 1.2 + .15,
+            a: Math.random() * .62 + .06,
+            tw: Math.random() * .02 + .004,
+            dir: Math.random() > .5 ? 1 : -1,
+            s: Math.random() * driftSpeed + .003
+          }));
+        }
+
+        function spawnMeteor(){
+          const fromLeft = Math.random() > .5;
+          const startX = fromLeft ? Math.random() * (w * .35) : w - Math.random() * (w * .35);
+          meteors.push({
+            x: startX,
+            y: Math.random() * (h * .4),
+            vx: fromLeft ? 9 + Math.random() * 4 : -(9 + Math.random() * 4),
+            vy: 4 + Math.random() * 2.5,
+            len: 80 + Math.random() * 80,
+            life: 0,
+            maxLife: 45 + Math.random() * 18
+          });
+          nextMeteor = 120 + Math.random() * 180;
+        }
+
+        function drawMeteor(m){
+          ctx.save();
+          ctx.translate(m.x, m.y);
+          const angle = Math.atan2(m.vy, m.vx);
+          ctx.rotate(angle);
+          const grad = ctx.createLinearGradient(0,0,-m.len,0);
+          grad.addColorStop(0,"rgba(255,255,255,.95)");
+          grad.addColorStop(.25,"rgba(212,187,116,.55)");
+          grad.addColorStop(1,"rgba(255,255,255,0)");
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.7;
+          ctx.beginPath();
+          ctx.moveTo(0,0);
+          ctx.lineTo(-m.len,0);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        function tick(){
+          ctx.clearRect(0,0,w,h);
+
+          for(const s of stars){
+            s.y += s.s;
+            s.a += s.tw * s.dir;
+            if(s.a >= .72 || s.a <= .05) s.dir *= -1;
+            if(s.y > h + 2){
+              s.y = -2;
+              s.x = Math.random() * w;
+            }
+
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(235,239,245,${s.a})`;
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          nextMeteor -= 1;
+          if(nextMeteor <= 0){
+            spawnMeteor();
+          }
+
+          meteors = meteors.filter(m => {
+            m.x += m.vx;
+            m.y += m.vy;
+            m.life += 1;
+            drawMeteor(m);
+            return m.life < m.maxLife && m.x > -m.len && m.x < w + m.len && m.y < h + m.len;
+          });
+
+          requestAnimationFrame(tick);
+        }
+
+        resize();
+        nextMeteor = 80;
+        tick();
+        addEventListener("resize", resize, {passive:true});
+      }
+
+      createSky(document.getElementById("introStars"), 120, .012);
+      createSky(document.getElementById("stars"), 165, .006);
+
+      const observer = new IntersectionObserver(entries => {
+        for(const entry of entries){
+          if(entry.isIntersecting){
+            entry.target.classList.add("on");
+            observer.unobserve(entry.target);
+          }
+        }
+      }, {threshold:.12});
+
+      document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+    })();
+  </script>
+</body>
+</html>
