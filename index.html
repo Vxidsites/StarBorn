@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#05070a" />
-  <title>StarBorn</title>
+  <title>StarBorn — Cosmic Exploration RPG</title>
+  <meta name="description" content="StarBorn is an upcoming cosmic exploration RPG on Roblox by StarBorn Studios. Explore strange worlds, discover Stars, unlock abilities, face enemies and uncover hidden lore." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2305070a'/%3E%3Cg fill='none' stroke='%23d4bb74' stroke-width='2.4' stroke-linejoin='round'%3E%3Cpolygon points='32,7 41,23 57,32 41,41 32,57 23,41 7,32 23,23'/%3E%3Cpolygon opacity='.55' points='32,15 38,26 49,32 38,38 32,49 26,38 15,32 26,26'/%3E%3C/g%3E%3Cpolygon fill='%23d4bb74' points='32,22 35,29 42,32 35,35 32,42 29,35 22,32 29,29'/%3E%3Ccircle cx='32' cy='32' r='2.4' fill='%23f4ecd5'/%3E%3C/svg%3E" />
 
   <style>
@@ -49,8 +50,9 @@
       display:grid;
       place-items:center;
       overflow:hidden;
-      background:#020304;
-      transition:opacity .55s ease,visibility .55s ease;
+      background:#010205;
+      transition:opacity .62s ease,visibility .62s ease;
+      isolation:isolate;
     }
 
     #intro.is-gone{
@@ -59,14 +61,12 @@
       pointer-events:none;
     }
 
-    body.intro-active{
-      overflow:hidden;
-    }
+    body.intro-active{overflow:hidden}
 
     body.intro-active #site{
       opacity:0;
-      transform:scale(1.012);
-      filter:blur(8px);
+      transform:scale(1.018);
+      filter:blur(12px) brightness(.72);
     }
 
     #site{
@@ -74,9 +74,9 @@
       transform:none;
       filter:none;
       transition:
-        opacity .7s cubic-bezier(.16,.82,.2,1),
-        transform .8s cubic-bezier(.16,.82,.2,1),
-        filter .6s ease;
+        opacity .82s cubic-bezier(.16,.82,.2,1),
+        transform 1s cubic-bezier(.16,.82,.2,1),
+        filter .75s ease;
     }
 
     #introStars{
@@ -84,26 +84,121 @@
       inset:0;
       width:100%;
       height:100%;
-      opacity:.42;
+      opacity:.62;
+      z-index:-5;
+    }
+
+    .intro-nebula{
+      position:absolute;
+      inset:-16%;
+      z-index:-4;
+      opacity:.7;
+      background:
+        radial-gradient(circle at 50% 48%,rgba(212,187,116,.10),transparent 18%),
+        radial-gradient(circle at 28% 36%,rgba(70,95,137,.16),transparent 25%),
+        radial-gradient(circle at 74% 66%,rgba(76,59,114,.13),transparent 26%);
+      filter:blur(24px);
+      animation:nebulaDrift 12s ease-in-out infinite alternate;
     }
 
     .intro-vignette{
       position:absolute;
       inset:0;
+      z-index:10;
       pointer-events:none;
       background:
-        radial-gradient(circle at 50% 48%,transparent 0 30%,rgba(0,0,0,.28) 66%,rgba(0,0,0,.88) 100%),
-        linear-gradient(180deg,rgba(255,255,255,.01),transparent 34%,rgba(0,0,0,.24));
+        radial-gradient(circle at 50% 50%,transparent 0 22%,rgba(1,2,4,.24) 58%,rgba(0,0,0,.91) 100%),
+        linear-gradient(180deg,rgba(255,255,255,.012),transparent 30%,rgba(0,0,0,.32));
     }
+
+    .intro-energy{
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:min(740px,74vw);
+      aspect-ratio:1;
+      transform:translate(-50%,-50%) scale(.45);
+      opacity:0;
+      z-index:-1;
+      pointer-events:none;
+      filter:drop-shadow(0 0 28px rgba(212,187,116,.16));
+      transition:opacity .5s ease,transform 1.35s cubic-bezier(.16,.82,.2,1);
+    }
+
+    .intro-energy.ignite{
+      opacity:1;
+      transform:translate(-50%,-50%) scale(1);
+    }
+
+    .energy-ring{
+      position:absolute;
+      inset:8%;
+      border:1px solid rgba(212,187,116,.22);
+      border-radius:50%;
+      box-shadow:inset 0 0 22px rgba(212,187,116,.05),0 0 22px rgba(145,167,191,.05);
+    }
+
+    .energy-ring::before,
+    .energy-ring::after{
+      content:"";
+      position:absolute;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:#f5e8bd;
+      box-shadow:0 0 18px rgba(212,187,116,.85);
+    }
+
+    .energy-ring::before{left:50%;top:-4px}
+    .energy-ring::after{left:10%;top:78%}
+
+    .energy-ring.one{animation:ringSpin 7s linear infinite}
+    .energy-ring.two{
+      inset:20%;
+      border-color:rgba(145,167,191,.2);
+      transform:rotate(57deg) scaleY(.56);
+      animation:ringSpinReverse 5.8s linear infinite;
+    }
+    .energy-ring.three{
+      inset:29%;
+      border-color:rgba(212,187,116,.28);
+      transform:rotate(-28deg) scaleY(.42);
+      animation:ringSpin 4.6s linear infinite;
+    }
+
+    .intro-core{
+      position:absolute;
+      left:50%;top:50%;
+      width:18px;height:18px;
+      transform:translate(-50%,-50%) rotate(45deg);
+      background:#f5e6b4;
+      box-shadow:
+        0 0 18px rgba(255,244,209,.95),
+        0 0 60px rgba(212,187,116,.55),
+        0 0 130px rgba(145,167,191,.20);
+      animation:coreBreathe 1.7s ease-in-out infinite;
+    }
+
+    .intro-core::before,
+    .intro-core::after{
+      content:"";
+      position:absolute;
+      left:50%;top:50%;
+      background:linear-gradient(90deg,transparent,rgba(255,246,222,.78),transparent);
+      transform:translate(-50%,-50%) rotate(-45deg);
+    }
+    .intro-core::before{width:210px;height:1px}
+    .intro-core::after{width:1px;height:210px}
 
     .intro-stage{
       position:relative;
       z-index:2;
-      width:min(1240px,95vw);
-      min-height:360px;
+      width:min(1280px,95vw);
+      min-height:430px;
       display:grid;
       place-items:center;
       text-align:center;
+      perspective:1000px;
     }
 
     .studio-card{
@@ -112,20 +207,18 @@
       will-change:opacity,transform,filter;
     }
 
-    .studio-card.show{
-      animation:studioCardIn 1.55s cubic-bezier(.2,.72,.2,1) forwards;
-    }
+    .studio-card.show{animation:studioCardIn 1.45s cubic-bezier(.2,.72,.2,1) forwards}
 
     .studio-name{
       font-size:clamp(12px,1vw,15px);
-      letter-spacing:.46em;
+      letter-spacing:.48em;
       text-transform:uppercase;
-      font-weight:700;
+      font-weight:750;
     }
 
     .presents{
       margin-top:13px;
-      color:#777e89;
+      color:#727985;
       font-family:Georgia,"Times New Roman",serif;
       font-style:italic;
       font-size:14px;
@@ -138,106 +231,103 @@
       opacity:0;
       display:grid;
       place-items:center;
-      will-change:opacity;
+      will-change:opacity,transform,filter;
+      transform:scale(.94);
+      filter:blur(10px);
     }
 
     .title-card.form{
       opacity:1;
+      transform:scale(1);
+      filter:blur(0);
+      transition:opacity .18s ease,transform 1s cubic-bezier(.14,.82,.18,1),filter .5s ease;
     }
+
+    .intro-kicker{
+      margin-bottom:17px;
+      color:#8f96a1;
+      font-size:9px;
+      letter-spacing:.42em;
+      text-transform:uppercase;
+      opacity:0;
+      transform:translateY(7px);
+    }
+
+    .title-card.form .intro-kicker{animation:subtleIn .45s .26s ease forwards}
 
     .intro-title-main,
     .break-piece{
       font-family:"Arial Narrow",Arial,Helvetica,sans-serif;
-      font-size:clamp(80px,14vw,190px);
-      line-height:.78;
+      font-size:clamp(82px,14vw,194px);
+      line-height:.77;
       letter-spacing:-.07em;
       text-transform:uppercase;
       font-weight:900;
       color:var(--text);
       white-space:nowrap;
       text-shadow:
-        -1px 0 rgba(125,156,189,.26),
-        1px 0 rgba(212,187,116,.16);
+        -1px 0 rgba(125,156,189,.28),
+        1px 0 rgba(212,187,116,.23),
+        0 0 36px rgba(212,187,116,.035);
     }
 
     .intro-title-main{
       position:relative;
       opacity:0;
       clip-path:inset(0 100% 0 0);
-      filter:blur(3px);
-      transform:translateY(4px) scale(.995);
-      will-change:clip-path,opacity,filter,transform;
+      transform:translateY(5px);
+      will-change:clip-path,opacity,transform;
     }
 
-    .title-card.form .intro-title-main{
-      animation:titleDraw 1.12s .08s cubic-bezier(.16,.74,.18,1) forwards;
-    }
+    .title-card.form .intro-title-main{animation:titleDraw 1.05s .08s cubic-bezier(.16,.74,.18,1) forwards}
 
     .intro-title-main::after{
       content:"";
       position:absolute;
-      inset:-18% -4%;
+      inset:-24% -6%;
       opacity:0;
-      background:linear-gradient(
-        100deg,
-        transparent 30%,
-        rgba(255,255,255,.08) 46%,
-        rgba(212,187,116,.15) 50%,
-        transparent 58%
-      );
-      transform:translateX(-70%);
+      background:linear-gradient(100deg,transparent 31%,rgba(255,255,255,.10) 45%,rgba(212,187,116,.22) 50%,transparent 59%);
+      transform:translateX(-76%);
       pointer-events:none;
     }
 
-    .title-card.form .intro-title-main::after{
-      animation:titleLight 1.25s .18s ease-out forwards;
-    }
+    .title-card.form .intro-title-main::after{animation:titleLight 1.34s .2s ease-out forwards}
 
     .intro-rule{
-      width:min(700px,62vw);
+      width:min(720px,62vw);
       height:1px;
       margin-top:30px;
       opacity:0;
-      transform:scaleX(.15);
-      background:linear-gradient(90deg,transparent,rgba(212,187,116,.46),transparent);
+      transform:scaleX(.08);
+      background:linear-gradient(90deg,transparent,rgba(212,187,116,.52),rgba(255,255,255,.58),rgba(212,187,116,.52),transparent);
     }
 
-    .title-card.form .intro-rule{
-      animation:ruleIn .58s 1s ease forwards;
-    }
+    .title-card.form .intro-rule{animation:ruleIn .62s .96s ease forwards}
 
     .intro-sub{
       margin-top:15px;
-      color:#6e7580;
+      color:#8d949e;
       font-size:9px;
-      letter-spacing:.36em;
+      letter-spacing:.34em;
       text-transform:uppercase;
       opacity:0;
       transform:translateY(5px);
     }
 
-    .title-card.form .intro-sub{
-      animation:subtleIn .42s 1.12s ease forwards;
-    }
+    .title-card.form .intro-sub{animation:subtleIn .44s 1.07s ease forwards}
 
     .intro-comet{
       position:absolute;
       z-index:6;
       top:49%;
-      left:-34vw;
-      width:min(370px,27vw);
-      min-width:190px;
-      height:1px;
+      left:-38vw;
+      width:min(460px,32vw);
+      min-width:220px;
+      height:2px;
       opacity:0;
-      background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(145,167,191,.05),
-        rgba(212,187,116,.36),
-        rgba(255,255,255,.96)
-      );
-      box-shadow:0 0 12px rgba(212,187,116,.16);
-      transform:translateY(-50%) rotate(-1.5deg);
+      background:linear-gradient(90deg,transparent,rgba(145,167,191,.10),rgba(212,187,116,.5),rgba(255,255,255,1));
+      box-shadow:0 0 15px rgba(212,187,116,.24);
+      transform:translateY(-50%) rotate(-2deg);
       pointer-events:none;
       will-change:left,opacity;
     }
@@ -245,21 +335,15 @@
     .intro-comet::after{
       content:"";
       position:absolute;
-      right:-2px;
-      top:50%;
-      width:4px;
-      height:4px;
+      right:-3px;top:50%;
+      width:7px;height:7px;
       border-radius:50%;
       background:#fff;
       transform:translateY(-50%);
-      box-shadow:
-        0 0 7px rgba(255,255,255,.95),
-        0 0 17px rgba(212,187,116,.34);
+      box-shadow:0 0 9px #fff,0 0 27px rgba(212,187,116,.65),0 0 60px rgba(145,167,191,.28);
     }
 
-    .intro-comet.fly{
-      animation:cometSweep 1.32s cubic-bezier(.16,.68,.2,1) forwards;
-    }
+    .intro-comet.fly{animation:cometSweep 1.25s cubic-bezier(.16,.68,.2,1) forwards}
 
     .break-layer{
       position:absolute;
@@ -272,145 +356,127 @@
       visibility:hidden;
     }
 
-    .break-layer.swap{
-      opacity:1;
-      visibility:visible;
-    }
+    .break-layer.swap{opacity:1;visibility:visible}
 
     .break-piece{
       position:absolute;
-      left:50%;
-      top:50%;
+      left:50%;top:50%;
       width:100%;
       text-align:center;
       transform:translate(-50%,-50%);
       will-change:transform,opacity,filter;
     }
 
-    .break-piece.one{
-      clip-path:polygon(0 0,52% 0,47% 51%,0 48%);
-    }
+    .break-piece.one{clip-path:polygon(0 0,52% 0,47% 51%,0 48%)}
+    .break-piece.two{clip-path:polygon(52% 0,100% 0,100% 46%,47% 51%)}
+    .break-piece.three{clip-path:polygon(0 48%,47% 51%,52% 100%,0 100%)}
+    .break-piece.four{clip-path:polygon(47% 51%,100% 46%,100% 100%,52% 100%)}
 
-    .break-piece.two{
-      clip-path:polygon(52% 0,100% 0,100% 46%,47% 51%);
-    }
-
-    .break-piece.three{
-      clip-path:polygon(0 48%,47% 51%,52% 100%,0 100%);
-    }
-
-    .break-piece.four{
-      clip-path:polygon(47% 51%,100% 46%,100% 100%,52% 100%);
-    }
-
-    .break-layer.break .one{
-      animation:pieceOne .68s cubic-bezier(.12,.72,.12,1) forwards;
-    }
-
-    .break-layer.break .two{
-      animation:pieceTwo .68s cubic-bezier(.12,.72,.12,1) forwards;
-    }
-
-    .break-layer.break .three{
-      animation:pieceThree .68s cubic-bezier(.12,.72,.12,1) forwards;
-    }
-
-    .break-layer.break .four{
-      animation:pieceFour .68s cubic-bezier(.12,.72,.12,1) forwards;
-    }
+    .break-layer.break .one{animation:pieceOne .8s cubic-bezier(.12,.72,.12,1) forwards}
+    .break-layer.break .two{animation:pieceTwo .8s cubic-bezier(.12,.72,.12,1) forwards}
+    .break-layer.break .three{animation:pieceThree .8s cubic-bezier(.12,.72,.12,1) forwards}
+    .break-layer.break .four{animation:pieceFour .8s cubic-bezier(.12,.72,.12,1) forwards}
 
     .intro-cut{
       position:absolute;
       z-index:7;
-      left:50%;
-      top:50%;
-      width:0;
-      height:1px;
+      left:50%;top:50%;
+      width:0;height:2px;
       opacity:0;
       transform:translate(-50%,-50%) rotate(-1deg);
-      background:linear-gradient(90deg,transparent,#fff,rgba(212,187,116,.7),transparent);
-      box-shadow:0 0 14px rgba(255,255,255,.22);
+      background:linear-gradient(90deg,transparent,#fff,rgba(212,187,116,.95),#fff,transparent);
+      box-shadow:0 0 22px rgba(255,255,255,.34),0 0 48px rgba(212,187,116,.2);
       pointer-events:none;
     }
 
-    .intro-cut.go{
-      animation:cutAcross .38s ease-out forwards;
-    }
+    .intro-cut.go{animation:cutAcross .42s ease-out forwards}
 
-    .title-card.breaking{
+    .intro-flash{
+      position:absolute;
+      inset:0;
+      z-index:8;
       opacity:0;
+      pointer-events:none;
+      background:radial-gradient(circle at 50% 50%,rgba(255,251,235,.98),rgba(212,187,116,.32) 18%,transparent 52%);
+      mix-blend-mode:screen;
     }
 
+    .intro-flash.go{animation:introFlash .68s ease-out forwards}
+
+    .intro-shockwave{
+      position:absolute;
+      z-index:7;
+      left:50%;top:50%;
+      width:80px;height:80px;
+      border:1px solid rgba(255,243,207,.7);
+      border-radius:50%;
+      opacity:0;
+      transform:translate(-50%,-50%) scale(.2);
+      box-shadow:0 0 40px rgba(212,187,116,.18);
+      pointer-events:none;
+    }
+
+    .intro-shockwave.go{animation:shockwave 1s cubic-bezier(.12,.72,.12,1) forwards}
+
+    .intro-shards{
+      position:absolute;
+      inset:0;
+      z-index:6;
+      pointer-events:none;
+    }
+
+    .intro-shard{
+      position:absolute;
+      left:50%;top:50%;
+      width:3px;
+      height:18px;
+      opacity:0;
+      background:linear-gradient(180deg,#fff,rgba(212,187,116,.18));
+      box-shadow:0 0 10px rgba(212,187,116,.45);
+      transform-origin:50% 100%;
+    }
+
+    .intro-shards.go .intro-shard{animation:shardBurst .85s cubic-bezier(.16,.72,.18,1) forwards}
+
+    .title-card.breaking{opacity:0}
+
+    @keyframes nebulaDrift{
+      from{transform:translate3d(-1.5%,0,0) scale(1)}
+      to{transform:translate3d(1.5%,-1%,0) scale(1.05)}
+    }
+    @keyframes ringSpin{to{transform:rotate(360deg)}}
+    @keyframes ringSpinReverse{to{transform:rotate(-303deg) scaleY(.56)}}
+    @keyframes coreBreathe{50%{transform:translate(-50%,-50%) rotate(45deg) scale(1.4)}}
     @keyframes studioCardIn{
-      0%{opacity:0;transform:translateY(8px);filter:blur(5px)}
-      22%,66%{opacity:1;transform:none;filter:blur(0)}
-      100%{opacity:0;transform:translateY(-5px);filter:blur(4px)}
+      0%{opacity:0;transform:translateY(10px) scale(.985);filter:blur(7px)}
+      20%,66%{opacity:1;transform:none;filter:blur(0)}
+      100%{opacity:0;transform:translateY(-7px) scale(1.01);filter:blur(5px)}
     }
-
     @keyframes titleDraw{
-      0%{
-        opacity:0;
-        clip-path:inset(0 100% 0 0);
-        filter:blur(3px);
-        transform:translateY(4px) scale(.995);
-      }
+      0%{opacity:0;clip-path:inset(0 100% 0 0);transform:translateY(5px)}
       20%{opacity:1}
-      100%{
-        opacity:1;
-        clip-path:inset(0 0 0 0);
-        filter:blur(0);
-        transform:none;
-      }
+      100%{opacity:1;clip-path:inset(0 0 0 0);transform:none}
     }
-
     @keyframes titleLight{
-      0%{opacity:0;transform:translateX(-70%)}
-      22%{opacity:.8}
-      100%{opacity:0;transform:translateX(70%)}
+      0%{opacity:0;transform:translateX(-76%)}
+      22%{opacity:.95}
+      100%{opacity:0;transform:translateX(76%)}
     }
-
-    @keyframes ruleIn{
-      from{opacity:0;transform:scaleX(.15)}
-      to{opacity:.7;transform:scaleX(1)}
+    @keyframes ruleIn{from{opacity:0;transform:scaleX(.08)}to{opacity:.78;transform:scaleX(1)}}
+    @keyframes subtleIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    @keyframes cometSweep{0%{left:-38vw;opacity:0}7%{opacity:1}90%{opacity:1}100%{left:114vw;opacity:0}}
+    @keyframes cutAcross{0%{width:0;opacity:0}18%{opacity:1}100%{width:min(1180px,90vw);opacity:0}}
+    @keyframes introFlash{0%{opacity:0}15%{opacity:.85}100%{opacity:0}}
+    @keyframes shockwave{0%{opacity:.78;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(13)}}
+    @keyframes shardBurst{
+      0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) translateY(0) scaleY(.4)}
+      20%{opacity:.95}
+      100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) translateY(calc(var(--d) * -1)) scaleY(1.25)}
     }
-
-    @keyframes subtleIn{
-      from{opacity:0;transform:translateY(5px)}
-      to{opacity:1;transform:none}
-    }
-
-    @keyframes cometSweep{
-      0%{left:-34vw;opacity:0}
-      8%{opacity:1}
-      90%{opacity:1}
-      100%{left:112vw;opacity:0}
-    }
-
-    @keyframes cutAcross{
-      0%{width:0;opacity:0}
-      20%{opacity:.9}
-      100%{width:min(1120px,88vw);opacity:0}
-    }
-
-    @keyframes pieceOne{
-      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
-      to{transform:translate(calc(-50% - 92px),calc(-50% - 44px)) rotate(-2.5deg);opacity:0;filter:blur(2px)}
-    }
-
-    @keyframes pieceTwo{
-      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
-      to{transform:translate(calc(-50% + 108px),calc(-50% - 36px)) rotate(2.8deg);opacity:0;filter:blur(2px)}
-    }
-
-    @keyframes pieceThree{
-      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
-      to{transform:translate(calc(-50% - 110px),calc(-50% + 48px)) rotate(2.4deg);opacity:0;filter:blur(2px)}
-    }
-
-    @keyframes pieceFour{
-      from{transform:translate(-50%,-50%);opacity:1;filter:blur(0)}
-      to{transform:translate(calc(-50% + 96px),calc(-50% + 52px)) rotate(-2.2deg);opacity:0;filter:blur(2px)}
-    }
+    @keyframes pieceOne{from{transform:translate(-50%,-50%);opacity:1}to{transform:translate(calc(-50% - 150px),calc(-50% - 72px)) rotate(-5deg) scale(.99);opacity:0;filter:blur(4px)}}
+    @keyframes pieceTwo{from{transform:translate(-50%,-50%);opacity:1}to{transform:translate(calc(-50% + 168px),calc(-50% - 66px)) rotate(5.5deg) scale(.99);opacity:0;filter:blur(4px)}}
+    @keyframes pieceThree{from{transform:translate(-50%,-50%);opacity:1}to{transform:translate(calc(-50% - 164px),calc(-50% + 82px)) rotate(4.8deg) scale(.99);opacity:0;filter:blur(4px)}}
+    @keyframes pieceFour{from{transform:translate(-50%,-50%);opacity:1}to{transform:translate(calc(-50% + 152px),calc(-50% + 88px)) rotate(-4.4deg) scale(.99);opacity:0;filter:blur(4px)}}
 
     /* ---------------- BACKGROUND ---------------- */
 
@@ -713,6 +779,121 @@
       color:#ced1d6;
       font-size:13px;
       line-height:1.55;
+    }
+
+
+
+    .hero-cosmos{
+      position:absolute;
+      right:clamp(18px,5vw,90px);
+      top:16%;
+      width:min(520px,42vw);
+      aspect-ratio:1;
+      opacity:.42;
+      pointer-events:none;
+      z-index:-1;
+      filter:drop-shadow(0 0 50px rgba(212,187,116,.05));
+    }
+
+    .hero-orbit{
+      position:absolute;
+      inset:13%;
+      border:1px solid rgba(212,187,116,.17);
+      border-radius:50%;
+      animation:heroOrbit 18s linear infinite;
+    }
+
+    .hero-orbit::after{
+      content:"";
+      position:absolute;
+      left:50%;top:-3px;
+      width:6px;height:6px;
+      border-radius:50%;
+      background:rgba(244,232,196,.95);
+      box-shadow:0 0 15px rgba(212,187,116,.58);
+    }
+
+    .hero-orbit.two{
+      inset:24%;
+      transform:rotate(62deg) scaleY(.48);
+      border-color:rgba(145,167,191,.18);
+      animation:heroOrbitTwo 13s linear infinite reverse;
+    }
+
+    .hero-starcore{
+      position:absolute;
+      left:50%;top:50%;
+      width:10px;height:10px;
+      transform:translate(-50%,-50%) rotate(45deg);
+      background:rgba(244,232,196,.98);
+      box-shadow:0 0 20px rgba(212,187,116,.45),0 0 80px rgba(145,167,191,.14);
+    }
+
+    @keyframes heroOrbit{to{transform:rotate(360deg)}}
+    @keyframes heroOrbitTwo{to{transform:rotate(422deg) scaleY(.48)}}
+
+    .hero-tagline{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:18px;
+      color:#7c838e;
+      font-size:10px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+    }
+
+    .hero-tagline::before{
+      content:"";
+      width:34px;
+      height:1px;
+      background:rgba(212,187,116,.5);
+    }
+
+    .discord-panel{
+      margin-top:18px;
+      padding:17px 18px;
+      border:1px solid rgba(145,167,191,.2);
+      background:linear-gradient(90deg,rgba(145,167,191,.065),rgba(255,255,255,.009) 52%,transparent);
+      display:grid;
+      grid-template-columns:auto minmax(0,1fr) auto;
+      gap:16px;
+      align-items:center;
+    }
+
+    .discord-glyph{
+      width:36px;height:36px;
+      display:grid;place-items:center;
+      border:1px solid rgba(212,187,116,.30);
+      color:var(--accent);
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:18px;
+      transform:rotate(45deg);
+    }
+    .discord-glyph span{transform:rotate(-45deg)}
+
+    .discord-copy b{
+      display:block;
+      margin-bottom:4px;
+      color:#ece9e0;
+      font-size:12px;
+      letter-spacing:.04em;
+    }
+    .discord-copy span{
+      display:block;
+      color:#7f8792;
+      font-size:11px;
+      line-height:1.45;
+    }
+
+    .btn.discord{
+      border-color:rgba(145,167,191,.38);
+      color:#dce5ef;
+      white-space:nowrap;
+    }
+    .btn.discord:hover{
+      border-color:rgba(145,167,191,.7);
+      background:rgba(145,167,191,.08);
     }
 
     /* ---------------- ABOUT ---------------- */
@@ -1213,6 +1394,22 @@
         justify-content:flex-start;
       }
 
+      .hero-cosmos{
+        width:min(560px,72vw);
+        right:-16vw;
+        top:20%;
+        opacity:.28;
+      }
+
+      .discord-panel{
+        grid-template-columns:auto 1fr;
+      }
+
+      .discord-panel .btn{
+        grid-column:1 / -1;
+        text-align:center;
+      }
+
       .lore-piece{
         margin-left:0;
       }
@@ -1241,6 +1438,9 @@
 
     @media(max-width:620px){
       .brand-text{display:none}
+
+      .discord-panel{padding:15px}
+      .hero-tagline{font-size:8px;letter-spacing:.16em}
 
       .hero-strip,
       .dev-grid,
@@ -1284,7 +1484,15 @@
 <body class="intro-active">
   <div id="intro" aria-hidden="true">
     <canvas id="introStars"></canvas>
+    <div class="intro-nebula"></div>
     <div class="intro-vignette"></div>
+
+    <div class="intro-energy" id="introEnergy">
+      <div class="energy-ring one"></div>
+      <div class="energy-ring two"></div>
+      <div class="energy-ring three"></div>
+      <div class="intro-core"></div>
+    </div>
 
     <div class="intro-stage">
       <div class="studio-card" id="studioCard">
@@ -1295,8 +1503,10 @@
       <div class="intro-comet" id="introComet"></div>
 
       <div class="title-card" id="titleCard">
+        <div class="intro-kicker">The sky remembers</div>
         <div class="intro-title-main">STARBORN</div>
         <div class="intro-rule"></div>
+        <div class="intro-sub">A Cosmic Exploration RPG</div>
       </div>
 
       <div class="break-layer" id="breakLayer">
@@ -1308,6 +1518,10 @@
 
       <div class="intro-cut" id="introCut"></div>
     </div>
+
+    <div class="intro-shards" id="introShards"></div>
+    <div class="intro-shockwave" id="introShockwave"></div>
+    <div class="intro-flash" id="introFlash"></div>
   </div>
 
   <canvas id="stars"></canvas>
@@ -1334,42 +1548,60 @@
         <a href="#world">World</a>
         <a href="#lore">Lore</a>
         <a href="#dev">Dev</a>
+        <a href="https://discord.com/starbornstudios" target="_blank" rel="noopener noreferrer">Discord ↗</a>
       </div>
     </nav>
 
     <section class="hero" id="top">
+      <div class="hero-cosmos" aria-hidden="true">
+        <div class="hero-orbit"></div>
+        <div class="hero-orbit two"></div>
+        <div class="hero-starcore"></div>
+      </div>
+
       <div class="hero-inner">
         <div class="eyebrow">StarBorn Studios presents</div>
         <h1>StarBorn</h1>
+        <div class="hero-tagline">Cosmic exploration RPG / Roblox</div>
 
         <div class="hero-bottom">
           <div class="hero-copy">
-            <strong>StarBorn is an RNG-based Roblox experience built around collecting stars, progression, exploration and discovery.</strong>
-            Under the surface, the world holds a larger mystery, with hidden details, fragments of history and a story that only makes sense once enough pieces are found.
+            <strong>Explore a world changed by fallen Stars.</strong>
+            Discover Stars and the abilities they hold, complete quests, fight enemies and bosses, unlock new areas, and piece together a mystery that was here long before you arrived.
           </div>
 
           <div class="hero-actions">
-            <a class="btn primary" href="#lore">Read the lore</a>
-            <a class="btn" href="#dev">See development</a>
+            <a class="btn primary" href="#about">Enter the world</a>
+            <a class="btn discord" href="https://discord.com/starbornstudios" target="_blank" rel="noopener noreferrer">Join Discord ↗</a>
+            <a class="btn" href="#lore">Read the lore</a>
           </div>
+        </div>
+
+        <div class="discord-panel reveal">
+          <div class="discord-glyph" aria-hidden="true"><span>✦</span></div>
+          <div class="discord-copy">
+            <b>Join StarBorn Studios</b>
+            <span>Follow development, see sneak peeks, join events, talk theories and be there while the new StarBorn is built.</span>
+          </div>
+          <a class="btn discord" href="https://discord.com/starbornstudios" target="_blank" rel="noopener noreferrer">discord.com/starbornstudios ↗</a>
         </div>
 
         <div class="hero-strip reveal">
           <div class="hero-cell">
             <b>Status</b>
-            <span>Currently being rebuilt with a stronger visual identity and a more connected world.</span>
+            <span>StarBorn is being rebuilt from the ground up around its new RPG direction.</span>
           </div>
           <div class="hero-cell">
             <b>Core Loop</b>
-            <span>Roll stars, collect them, explore the map, unlock new things and piece together what is happening.</span>
+            <span>Explore, discover Stars, unlock abilities, complete quests, fight, progress and uncover secrets.</span>
           </div>
           <div class="hero-cell">
-            <b>Direction</b>
-            <span>Less generic RNG. More atmosphere, better polish, real secrets and a world worth paying attention to.</span>
+            <b>World</b>
+            <span>Connected areas, ancient ruins, hidden paths, bosses, strange landmarks and Starfall events.</span>
           </div>
           <div class="hero-cell">
-            <b>Next Drop</b>
-            <span>Lore entry two stays locked until the game officially releases.</span>
+            <b>Lore</b>
+            <span>Entry 001 is live. Entry 002 remains sealed until StarBorn releases.</span>
           </div>
         </div>
       </div>
@@ -1379,22 +1611,22 @@
       <div class="section-inner">
         <div class="section-head reveal">
           <div class="section-index">01 / Game</div>
-          <h2 class="section-title">Built to feel like more than just standing around and pressing roll.</h2>
+          <h2 class="section-title">A world built around what you discover, not how long you stand in one place.</h2>
         </div>
 
         <div class="about-grid">
           <div class="statement reveal">
             <p>
-              Every star, area, effect and hidden detail is being rebuilt so the whole game feels like it belongs to the same world.
+              StarBorn is becoming a full exploration RPG. Stars still sit at the center of the game, but now they can change how you move, fight, explore and interact with the world around you.
             </p>
           </div>
 
           <div class="facts reveal">
-            <div class="fact"><b>Genre</b><span>RNG + exploration + progression</span></div>
+            <div class="fact"><b>Genre</b><span>Cosmic exploration RPG</span></div>
             <div class="fact"><b>Platform</b><span>Roblox</span></div>
             <div class="fact"><b>Studio</b><span>StarBorn Studios</span></div>
             <div class="fact"><b>Status</b><span>Currently in development</span></div>
-            <div class="fact"><b>Focus</b><span>Custom UI, animation, VFX, SFX, world design and lore</span></div>
+            <div class="fact"><b>Focus</b><span>Exploration, Star abilities, combat, quests, bosses, secrets and lore</span></div>
           </div>
         </div>
       </div>
@@ -1404,35 +1636,49 @@
       <div class="section-inner">
         <div class="section-head reveal">
           <div class="section-index">02 / Systems</div>
-          <h2 class="section-title">Luck gets you a star. The rest of the game gives you a reason to care about it.</h2>
+          <h2 class="section-title">Stars are still the heart of the game. Now they actually change how you play.</h2>
         </div>
 
         <div class="systems-list reveal">
           <div class="system-row">
             <div class="system-no">01</div>
-            <div class="system-name">Rolling</div>
-            <div class="system-desc">The main roll system, rare pull sequences, auto roll, quick roll and different presentation depending on what you hit.</div>
-            <div class="system-state">Rebuilding</div>
+            <div class="system-name">Stars</div>
+            <div class="system-desc">Discover Stars through exploration, quests, bosses, hidden areas, events and rare drops. Some Stars carry abilities of their own.</div>
+            <div class="system-state">Core</div>
           </div>
 
           <div class="system-row">
             <div class="system-no">02</div>
-            <div class="system-name">Star Index</div>
-            <div class="system-desc">A proper collection for discovered stars, rarities, variants and anything unusual you manage to find.</div>
-            <div class="system-state">Planned</div>
+            <div class="system-name">Abilities</div>
+            <div class="system-desc">Equip Stars to gain powers built for movement, combat and exploration — from dashes and shields to stranger abilities found later.</div>
+            <div class="system-state">Building</div>
           </div>
 
           <div class="system-row">
             <div class="system-no">03</div>
             <div class="system-name">Exploration</div>
-            <div class="system-desc">Areas, hidden rooms, NPCs and things in the map that are easy to miss if you only stand in one place and roll.</div>
-            <div class="system-state">Rebuilding</div>
+            <div class="system-desc">Connected areas, hidden paths, ruins, puzzles and locations that reward players for actually looking around instead of following a marker.</div>
+            <div class="system-state">Building</div>
           </div>
 
           <div class="system-row">
             <div class="system-no">04</div>
-            <div class="system-name">Multiplayer</div>
-            <div class="system-desc">Parties, trading, leaderboards and ways to actually do things with other players instead of simply playing beside them.</div>
+            <div class="system-name">Combat</div>
+            <div class="system-desc">Enemies and bosses are part of the world, with readable attacks and Star abilities giving players different ways to handle encounters.</div>
+            <div class="system-state">Planned</div>
+          </div>
+
+          <div class="system-row">
+            <div class="system-no">05</div>
+            <div class="system-name">Quests</div>
+            <div class="system-desc">NPCs, discoveries and story threads guide progression without turning every objective into a checklist.</div>
+            <div class="system-state">Planned</div>
+          </div>
+
+          <div class="system-row">
+            <div class="system-no">06</div>
+            <div class="system-name">Starfall</div>
+            <div class="system-desc">World events can shift the sky, change what appears, unlock temporary encounters and bring rare discoveries with them.</div>
             <div class="system-state">Planned</div>
           </div>
         </div>
@@ -1450,21 +1696,21 @@
           <div class="world-panel reveal">
             <h3>What the world needs to do</h3>
             <p>
-              The map should give players reasons to move, search, backtrack and pay attention. Not every important thing will be marked.
+              The world is part of the progression. Players should have reasons to explore, return to old places with new abilities, notice strange details and take paths that are never pointed out directly.
             </p>
 
             <div class="world-list">
               <div class="world-item">
                 <b>Spawn</b>
-                <span>The starting point, early systems and the first signs that something about the stars is off.</span>
+                <span>The starting settlement, the broken heavenly portal, early quests and the first signs that something about the Stars is wrong.</span>
               </div>
               <div class="world-item">
                 <b>Outer Areas</b>
-                <span>Places built for progression, better stars, stranger discoveries and stronger visual identity.</span>
+                <span>Distinct regions with their own Stars, enemies, quests, landmarks, bosses and reasons to return later.</span>
               </div>
               <div class="world-item">
                 <b>Secrets</b>
-                <span>Hidden rooms, odd landmarks, locked spaces and details that matter more once the lore starts making sense.</span>
+                <span>Hidden rooms, strange structures, damaged coordinates and discoveries that become more important once the lore starts connecting.</span>
               </div>
             </div>
           </div>
@@ -1538,34 +1784,34 @@
 
         <div class="dev-grid reveal">
           <article class="dev-card">
-            <small>01 / Rolling</small>
+            <small>01 / Foundation</small>
             <div>
-              <h3>Roll system</h3>
-              <p>Cleaner UI, smoother pacing, slot-style rolling and rare pulls that actually feel rare when they happen.</p>
+              <h3>RPG rebuild</h3>
+              <p>Core systems are being rebuilt around exploration, Star abilities, progression and a connected world instead of pure RNG.</p>
             </div>
           </article>
 
           <article class="dev-card">
             <small>02 / World</small>
             <div>
-              <h3>Map + secrets</h3>
-              <p>More places to explore, hidden areas, NPCs, portals and details that tie directly back into the story.</p>
+              <h3>Areas + discoveries</h3>
+              <p>New regions are being designed around movement, quests, hidden paths, landmarks, bosses and environmental storytelling.</p>
             </div>
           </article>
 
           <article class="dev-card">
-            <small>03 / Presentation</small>
+            <small>03 / Gameplay</small>
             <div>
-              <h3>Visual polish</h3>
-              <p>Custom animation, VFX, SFX, lighting and UI so the game stops feeling like a pile of default parts.</p>
+              <h3>Stars + abilities</h3>
+              <p>Stars are becoming more than collectibles. Different Stars can change how players move, fight and interact with the world.</p>
             </div>
           </article>
 
           <article class="dev-card">
-            <small>04 / Release prep</small>
+            <small>04 / Story</small>
             <div>
               <h3>Lore entry two</h3>
-              <p>The second lore piece is being saved for release, so the first real drop ends with something still locked.</p>
+              <p>The second lore piece remains sealed for release. The game will start leaving more clues long before it gives any answers.</p>
             </div>
           </article>
         </div>
@@ -1575,27 +1821,30 @@
     <section class="cta">
       <div class="cta-shell reveal">
         <div class="cta-head">
-          <div class="section-index">06 / Archive Notes</div>
+          <div class="section-index">06 / Community</div>
           <div class="cta-copy">
-            <h2>More is already out there.</h2>
+            <h2>Follow the rebuild as it happens.</h2>
             <p>
-              This page only shows the beginning. The rest of the story is meant to be uncovered through later entries, map details, hidden locations and whatever follows the next fall.
+              Development logs, sneak peeks, testing news, events and community theories all live in the StarBorn Studios Discord.
             </p>
+            <div style="margin-top:24px">
+              <a class="btn discord" href="https://discord.com/starbornstudios" target="_blank" rel="noopener noreferrer">Join StarBorn Studios ↗</a>
+            </div>
           </div>
         </div>
 
         <div class="cta-grid">
           <div class="cta-box">
-            <b>Website lore</b>
-            <span>Entry one is live now. Entry two remains locked until release.</span>
+            <b>Development</b>
+            <span>See what is being rebuilt, what changed, and what is coming next.</span>
           </div>
           <div class="cta-box">
-            <b>In-game discovery</b>
-            <span>Not every important clue belongs on the site. Some things have to be found in the world itself.</span>
+            <b>Lore + theories</b>
+            <span>Follow official lore drops and compare what players discover inside the game.</span>
           </div>
           <div class="cta-box">
-            <b>Long-term plan</b>
-            <span>The stars are only the visible part of the problem. The answer comes later.</span>
+            <b>Testing + events</b>
+            <span>Tester openings, community events and future playtesting updates are posted there first.</span>
           </div>
         </div>
       </div>
@@ -1604,7 +1853,7 @@
     <footer>
       <div class="footer-inner">
         <span>© 2026 STARBORN STUDIOS</span>
-        <span>STARBORN / IN DEVELOPMENT</span>
+        <span>STARBORN / COSMIC EXPLORATION RPG / IN DEVELOPMENT</span>
       </div>
     </footer>
   </main>
@@ -1617,22 +1866,40 @@
       const comet = document.getElementById("introComet");
       const breakLayer = document.getElementById("breakLayer");
       const introCut = document.getElementById("introCut");
+      const introEnergy = document.getElementById("introEnergy");
+      const introFlash = document.getElementById("introFlash");
+      const introShockwave = document.getElementById("introShockwave");
+      const introShards = document.getElementById("introShards");
 
-      const introKey = "starbornIntroPolishedV2";
+      const introKey = "starbornIntroRPGV1";
       const skipIntro = sessionStorage.getItem(introKey) === "1";
+
+      function buildShards(){
+        if(!introShards) return;
+        for(let i=0;i<22;i++){
+          const shard = document.createElement("span");
+          shard.className = "intro-shard";
+          shard.style.setProperty("--r", `${(360 / 22) * i + (Math.random()*12-6)}deg`);
+          shard.style.setProperty("--d", `${150 + Math.random()*250}px`);
+          shard.style.animationDelay = `${Math.random()*.09}s`;
+          shard.style.height = `${8 + Math.random()*22}px`;
+          introShards.appendChild(shard);
+        }
+      }
 
       function finishIntro(){
         intro.classList.add("is-gone");
         sessionStorage.setItem(introKey,"1");
-        setTimeout(()=>intro.remove(),600);
+        setTimeout(()=>intro.remove(),700);
       }
 
-      function breakTitle(){
-        // Swap the real title for the clipped copy on the SAME frame.
-        // This avoids the doubled-text glitch from the previous intro.
+      function ruptureTitle(){
         title.style.visibility = "hidden";
         breakLayer.classList.add("swap");
         introCut.classList.add("go");
+        introFlash.classList.add("go");
+        introShockwave.classList.add("go");
+        introShards.classList.add("go");
 
         requestAnimationFrame(()=>{
           requestAnimationFrame(()=>{
@@ -1642,33 +1909,22 @@
         });
       }
 
+      buildShards();
+
       if(skipIntro){
         document.body.classList.remove("intro-active");
         intro.remove();
       }else{
-        requestAnimationFrame(()=>{
-          studio.classList.add("show");
-        });
+        requestAnimationFrame(()=>studio.classList.add("show"));
 
-        // Let the studio card finish completely before anything else appears.
-        setTimeout(()=>{
-          studio.style.visibility = "hidden";
-        },1580);
+        setTimeout(()=>introEnergy.classList.add("ignite"),950);
+        setTimeout(()=>{ studio.style.visibility = "hidden"; },1480);
+        setTimeout(()=>comet.classList.add("fly"),1570);
+        setTimeout(()=>title.classList.add("form"),1720);
 
-        // A single shooting streak passes through.
-        setTimeout(()=>{
-          comet.classList.add("fly");
-        },1770);
-
-        // STARBORN is revealed directly behind the streak.
-        setTimeout(()=>{
-          title.classList.add("form");
-        },1910);
-
-        // Clean hold, then one exact-frame swap into the break animation.
-        setTimeout(breakTitle,3350);
-
-        setTimeout(finishIntro,4070);
+        // Give the new RPG title a clean cinematic hold before it ruptures.
+        setTimeout(ruptureTitle,3650);
+        setTimeout(finishIntro,4520);
       }
 
       // Background starfield + shooting stars
